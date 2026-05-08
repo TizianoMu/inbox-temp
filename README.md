@@ -2,6 +2,8 @@
 
 A React app that displays **6 temporary email inboxes simultaneously** in a split-screen layout. Each inbox is a real, functional email address generated via the [Mail.tm](https://mail.tm) API. Emails arrive in real time through automatic polling, and can be opened in a clean popup viewer with full HTML rendering.
 
+> **Repository:** [https://github.com/TizianoMu/inbox-temp](https://github.com/TizianoMu/inbox-temp)
+
 ---
 
 ## Features
@@ -58,34 +60,18 @@ Mail.tm's API does not allow direct browser requests. A **Vite dev proxy** is us
 
 ## Installation
 
-### 1. Create a new Vite + React project
+### 1. Clone the repository
 
 ```bash
-npm create vite@latest inbox-temporanee -- --template react
-cd inbox-temporanee
+git clone https://github.com/TizianoMu/inbox-temp.git
+cd inbox-temp
+```
+
+### 2. Install dependencies
+
+```bash
 npm install
 ```
-
-### 2. Replace the source files
-
-Copy the provided files into your project, replacing the existing `src/` folder and `vite.config.js`:
-
-```
-your-project/
-├── vite.config.js        ← replace this
-└── src/
-    ├── App.jsx
-    ├── api/
-    │   └── mailApi.js
-    ├── hooks/
-    │   └── useMailbox.js
-    └── components/
-        ├── Mailbox.jsx
-        ├── MessageModal.jsx
-        └── PollDot.jsx
-```
-
-You can also delete the boilerplate files Vite generates (`App.css`, `index.css`, `assets/`) — they are not used.
 
 ### 3. Start the dev server
 

@@ -23,22 +23,22 @@ export default function Mailbox({ domains, index, triggerKey }) {
 
   return (
     <>
-      <div style={styles.box}>
+      <div className="mailbox-box">
         {/* Header */}
-        <div style={styles.header}>
+        <div className="mailbox-header">
           {(status === "waiting" || status === "loading") && (
-            <span style={styles.addrMuted}>
+            <span className="addr-muted">
               {status === "waiting" ? `In attesa (slot ${index + 1})...` : "Caricamento..."}
             </span>
           )}
           {status === "error" && (
-            <span style={styles.addrError} title={error}>{error}</span>
+            <span className="addr-error" title={error}>{error}</span>
           )}
           {status === "ready" && (
             <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <span style={styles.addr} title={address}>{address}</span>
+              <span className="addr-text" title={address}>{address}</span>
               {restored && (
-                <span style={styles.restoredBadge} title="Ripristinata da localStorage">↩</span>
+                <span className="badge-restored" title="Ripristinata da localStorage">↩</span>
               )}
             </div>
           )}
@@ -46,9 +46,9 @@ export default function Mailbox({ domains, index, triggerKey }) {
 
         {/* Barra polling */}
         {status === "ready" && (
-          <div style={styles.pollBar}>
+          <div className="poll-bar">
             <PollDot polling={polling} />
-            <span style={styles.pollText}>
+            <span className="poll-text">
               {polling
                 ? "Aggiornamento..."
                 : lastUpdate
@@ -59,22 +59,22 @@ export default function Mailbox({ domains, index, triggerKey }) {
         )}
 
         {/* Lista messaggi */}
-        <div style={styles.msgList}>
+        <div className="msg-list">
           {status === "ready" && messages.length === 0 && (
-            <div style={styles.empty}>Nessuna email ricevuta</div>
+            <div className="msg-empty">Nessuna email ricevuta</div>
           )}
           {messages.map((msg) => (
             <div
               key={msg.id}
-              style={styles.msg}
+              className="msg-item"
               onClick={() => setOpenMsg(msg)}
               title="Clicca per aprire"
             >
-              <div style={styles.msgTop}>
-                <span style={styles.from}>{msg.from?.address || "sconosciuto"}</span>
-                <span style={styles.time}>{formatTime(msg.createdAt)}</span>
+              <div className="msg-top">
+                <span className="msg-from">{msg.from?.address || "sconosciuto"}</span>
+                <span className="msg-time">{formatTime(msg.createdAt)}</span>
               </div>
-              <div style={styles.subject}>{msg.subject || "(nessun oggetto)"}</div>
+              <div className="msg-subject">{msg.subject || "(nessun oggetto)"}</div>
             </div>
           ))}
         </div>
@@ -86,42 +86,3 @@ export default function Mailbox({ domains, index, triggerKey }) {
     </>
   );
 }
-
-const styles = {
-  box: {
-    background: "#fff", border: "1px solid #ccc",
-    display: "flex", flexDirection: "column", overflow: "hidden",
-  },
-  header: {
-    borderBottom: "1px solid #ccc", padding: "6px 10px",
-    background: "#fafafa", minHeight: 30,
-  },
-  addr: {
-    fontSize: "12px", color: "#333", overflow: "hidden",
-    textOverflow: "ellipsis", whiteSpace: "nowrap", flex: 1,
-  },
-  addrMuted: { fontSize: "12px", color: "#999", display: "block" },
-  addrError: {
-    fontSize: "11px", color: "#c00", display: "block",
-    overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-  },
-  restoredBadge: { fontSize: "11px", color: "#888", flexShrink: 0, cursor: "default" },
-  pollBar: {
-    display: "flex", alignItems: "center", gap: 6,
-    padding: "3px 10px", borderBottom: "1px solid #eee", background: "#fafafa",
-  },
-  pollText: { fontSize: "10px", color: "#888" },
-  msgList: { flex: 1, overflowY: "auto", padding: "4px 0" },
-  empty: { padding: "12px 10px", fontSize: "11px", color: "#999" },
-  msg: { padding: "6px 10px", borderBottom: "1px solid #eee", cursor: "pointer" },
-  msgTop: { display: "flex", justifyContent: "space-between", alignItems: "center" },
-  from: {
-    fontSize: "11px", color: "#555", overflow: "hidden",
-    textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: "70%",
-  },
-  time: { fontSize: "10px", color: "#aaa", flexShrink: 0 },
-  subject: {
-    fontSize: "12px", color: "#222", marginTop: "2px",
-    overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-  },
-};

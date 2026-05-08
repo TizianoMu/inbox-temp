@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import {
-  POLL_INTERVAL,
   sleep,
   loadSavedAccounts,
   saveAccount,
@@ -8,8 +7,10 @@ import {
   getToken,
   createAccount,
   fetchMessages,
+  POLL_INTERVAL, // Importa POLL_INTERVAL da mailApi.js
 } from "../api/mailApi";
 
+const STAGGER_DELAY_MS = parseInt(import.meta.env.VITE_STAGGER_DELAY_MS) || 2000;
 export function useMailbox(domains, index, triggerKey) {
   const [address, setAddress] = useState(null);
   const [token, setToken] = useState(null);
@@ -60,7 +61,7 @@ export function useMailbox(domains, index, triggerKey) {
         }
       }
 
-      await sleep(index * 2000);
+      await sleep(index * STAGGER_DELAY_MS);
       if (cancelled) return;
       setStatus("loading");
       try {

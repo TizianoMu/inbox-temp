@@ -1,8 +1,9 @@
-const API = "/mailapi";
-const LS_KEY = "inbox_temporanee_accounts";
-const POLL_INTERVAL = 15000;
+const API = import.meta.env.VITE_MAIL_API_URL || "/mailapi"; // Fallback per il proxy di sviluppo
+const LS_KEY = import.meta.env.VITE_LS_KEY || "inbox_temporanee_accounts";
+const POLL_INTERVAL = parseInt(import.meta.env.VITE_POLL_INTERVAL_MS) || 15000;
+const API_RETRIES = parseInt(import.meta.env.VITE_API_RETRIES) || 5;
 
-export { API, LS_KEY, POLL_INTERVAL };
+export { API, LS_KEY, POLL_INTERVAL, API_RETRIES };
 
 // ---- Utilities ----
 export function randStr(len = 10) {
@@ -52,7 +53,7 @@ export async function fetchDomains() {
   return data["hydra:member"].map((d) => d.domain);
 }
 
-export async function getToken(address, password, retries = 5, baseDelay = 2000) {
+export async function getToken(address, password, retries = API_RETRIES, baseDelay = 2000) {
   for (let attempt = 0; attempt <= retries; attempt++) {
     const res = await fetch(`${API}/token`, {
       method: "POST",
@@ -70,7 +71,7 @@ export async function getToken(address, password, retries = 5, baseDelay = 2000)
   throw new Error("Impossibile ottenere token");
 }
 
-export async function createAccount(domain, retries = 5, baseDelay = 2000) {
+export async function createAccount(domain, retries = API_RETRIES, baseDelay = 2000) {
   const address = `${randStr(12)}@${domain}`;
   const password = randStr(16);
   for (let attempt = 0; attempt <= retries; attempt++) {

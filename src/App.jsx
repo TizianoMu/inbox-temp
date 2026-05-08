@@ -3,11 +3,18 @@ import { fetchDomains, clearAllAccounts } from "./api/mailApi";
 import Mailbox from "./components/Mailbox";
 import "./App.css";
 
+const DEFAULT_MAILBOX_COUNT = 6;
+const MAX_MAILBOX_COUNT = 10;
+
 export default function App() {
   const [domains, setDomains] = useState(null);
   const [domainError, setDomainError] = useState(null);
   const [triggerKey, setTriggerKey] = useState(0);
 
+  const mailboxCount = Math.min(
+    parseInt(import.meta.env.VITE_MAILBOX_COUNT) || DEFAULT_MAILBOX_COUNT,
+    MAX_MAILBOX_COUNT
+  );
   useEffect(() => {
     fetchDomains()
       .then(setDomains)
@@ -31,7 +38,7 @@ export default function App() {
         <div className="error-global">Errore domini: {domainError}</div>
       )}
       <div className="mailbox-grid">
-        {[0, 1, 2, 3, 4, 5].map((i) => (
+        {Array.from({ length: mailboxCount }).map((_, i) => (
           <Mailbox key={i} domains={domains || []} index={i} triggerKey={triggerKey} />
         ))}
       </div>

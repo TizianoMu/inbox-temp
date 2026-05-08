@@ -1,6 +1,6 @@
 # Inbox Temporanee
 
-A React app that displays **6 temporary email inboxes simultaneously** in a split-screen layout. Each inbox is a real, functional email address generated via the [Mail.tm](https://mail.tm) API. Emails arrive in real time through automatic polling, and can be opened in a clean popup viewer with full HTML rendering.
+A React app that displays a **configurable number of temporary email inboxes (up to 10)** simultaneously in a split-screen layout. Each inbox is a real, functional email address generated via the [Mail.tm](https://mail.tm) API. Emails arrive in real time through automatic polling, and can be opened in a clean popup viewer with full HTML rendering.
 
 > **Repository:** [https://github.com/TizianoMu/inbox-temp](https://github.com/TizianoMu/inbox-temp)
 
@@ -8,8 +8,8 @@ A React app that displays **6 temporary email inboxes simultaneously** in a spli
 
 ## Features
 
-- **6 live temporary inboxes** displayed side by side in a 3×2 grid
-- **Automatic polling** every 15 seconds with a live countdown and visual indicator
+- **Configurable number of live temporary inboxes (up to 10)** displayed side by side in a dynamic grid
+- **Automatic polling** every `VITE_POLL_INTERVAL_MS` milliseconds with a live countdown and visual indicator
 - **HTML email rendering** inside a sandboxed iframe, with a plain-text fallback
 - **HTML / Text toggle** when both versions of an email are available
 - **Persistent accounts** via `localStorage` — addresses survive page reloads
@@ -42,9 +42,9 @@ src/
 2. Each `Mailbox` slot checks `localStorage` for a saved `{ address, password }`
    - If found → re-authenticates silently to get a fresh token
    - If expired or missing → creates a new account (staggered by `index × 2s`)
-3. Once authenticated, each mailbox polls `GET /messages` every 15 seconds
+   - If expired or missing → creates a new account (staggered by `index × VITE_STAGGER_DELAY_MS` milliseconds)
+3. Once authenticated, each mailbox polls `GET /messages` every `VITE_POLL_INTERVAL_MS` milliseconds
 4. Clicking a message opens `MessageModal`, which fetches the full body via `GET /messages/:id` and renders it inside a sandboxed `<iframe>`
-
 ### CORS
 
 Mail.tm's API does not allow direct browser requests. A **Vite dev proxy** is used to forward all `/mailapi/*` requests to `https://api.mail.tm`, bypassing CORS in development.

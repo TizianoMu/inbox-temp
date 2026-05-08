@@ -41,7 +41,6 @@ src/
 1. On load, `App.jsx` fetches available domains from `api.mail.tm/domains`
 2. Each `Mailbox` slot checks `localStorage` for a saved `{ address, password }`
    - If found → re-authenticates silently to get a fresh token
-   - If expired or missing → creates a new account (staggered by `index × 2s`)
    - If expired or missing → creates a new account (staggered by `index × VITE_STAGGER_DELAY_MS` milliseconds)
 3. Once authenticated, each mailbox polls `GET /messages` every `VITE_POLL_INTERVAL_MS` milliseconds
 4. Clicking a message opens `MessageModal`, which fetches the full body via `GET /messages/:id` and renders it inside a sandboxed `<iframe>`
@@ -85,14 +84,25 @@ Open [http://localhost:5173](http://localhost:5173). The 6 inboxes will initiali
 
 ## Configuration
 
-All tuneable constants are at the top of their respective files:
+The application is configured via environment variables. Create a `.env` file in the root of your project using `.env.example` as a template:
 
-| Constant | File | Default | Description |
-|---|---|---|---|
-| `POLL_INTERVAL` | `api/mailApi.js` | `15000` | Milliseconds between inbox polls |
-| `LS_KEY` | `api/mailApi.js` | `inbox_temporanee_accounts` | localStorage key for saved accounts |
-| Stagger delay | `hooks/useMailbox.js` | `index × 2000ms` | Delay between mailbox creations |
-| Retry attempts | `api/mailApi.js` | `5` | Max retries on API errors |
+```env
+VITE_MAIL_API_URL=https://api.mail.tm/v1/
+VITE_MAILBOX_COUNT=6
+VITE_LS_KEY=inbox_temporanee_accounts
+VITE_POLL_INTERVAL_MS=15000
+VITE_STAGGER_DELAY_MS=2000
+VITE_API_RETRIES=5
+```
+
+### Parameters:
+
+- `VITE_MAIL_API_URL`: The base endpoint for API calls. Default: `https://api.mail.tm/v1/`.
+- `VITE_MAILBOX_COUNT`: Number of email mailboxes to display in the grid (Max: 10). Default: `6`.
+- `VITE_LS_KEY`: The `localStorage` key used to store saved accounts. Default: `inbox_temporanee_accounts`.
+- `VITE_POLL_INTERVAL_MS`: The interval in milliseconds between polling for new messages. Default: `15000` (15s).
+- `VITE_STAGGER_DELAY_MS`: Delay between the creation of each mailbox to avoid rate limiting. Default: `2000` (2s).
+- `VITE_API_RETRIES`: Maximum number of retries for API calls on failure. Default: `5`.
 
 ---
 
